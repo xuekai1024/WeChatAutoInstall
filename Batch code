@@ -1,1 +1,36 @@
+@echo off
+setlocal
 
+:: 设置微信安装包的下载URL和保存路径
+set WECHAT_SETUP_URL=https://dldir1.qq.com/weixin/Windows/WeChatSetup.exe
+set SETUP_FILE_PATH=%~dp0WeChatSetup.exe
+
+:: 设置安装路径
+set INSTALL_PATH=C:\Program Files\WeChat
+
+:: 下载微信安装包
+echo Downloading WeChat setup...
+curl -L -o %SETUP_FILE_PATH% %WECHAT_SETUP_URL%
+
+:: 检查下载是否成功
+if not exist %SETUP_FILE_PATH% (
+    echo Failed to download WeChat setup.
+    exit /b 1
+)
+
+:: 运行微信安装程序，假设支持 /S 进行静默安装，/D= 指定安装路径
+echo Installing WeChat...
+start /wait %SETUP_FILE_PATH% /S /D=%INSTALL_PATH%
+
+:: 检查安装是否成功
+if not exist "%INSTALL_PATH%\WeChat.exe" (
+    echo WeChat installation failed.
+    exit /b 1
+)
+
+:: 清理下载的安装包
+del /f /q %SETUP_FILE_PATH%
+
+echo WeChat installation completed.
+endlocal
+pause
